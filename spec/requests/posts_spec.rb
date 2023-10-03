@@ -1,9 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe 'Posts', type: :request do
-  before do # beforeブロックを修正
-    @user = create(:user)
-    @post = create(:post)
+  before do
+    @user = create(:user) # 各テストで使用できるユーザーを作成
+    @post = create(:post) # 閲覧用の Post を作成
   end
 
   describe 'GET /posts/new' do
@@ -44,6 +44,22 @@ RSpec.describe 'Posts', type: :request do
       it 'HTTPステータス200を返す' do
         sign_in @user
         get "/posts/#{@post.id}"
+        expect(response).to have_http_status '200'
+      end
+    end
+  end
+
+  describe 'GET /posts' do
+    context 'ログインしていない場合' do
+      it 'HTTPステータス200を返す' do
+        get '/posts'
+        expect(response).to have_http_status '200'
+      end
+    end
+    context 'ログインしている場合' do
+      it 'HTTPステータス200を返す' do
+        sign_in @user
+        get '/posts'
         expect(response).to have_http_status '200'
       end
     end
