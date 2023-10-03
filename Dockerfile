@@ -2,11 +2,16 @@
 FROM ruby:3.2.2
 
 # 必要なパッケージをインストール
-RUN apt-get update -qq && apt-get install -y nodejs postgresql-client curl
-
-# Node.jsとnpmのインストール
+RUN apt-get update -qq && apt-get install -y postgresql-client curl wget
 RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
-RUN apt-get install -y nodejs
+RUN apt-get update && apt-get install -y nodejs npm
+
+# Yarnのインストール
+RUN npm install -g yarn
+
+# Google Chromeのインストール
+RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+RUN apt install -y ./google-chrome-stable_current_amd64.deb
 
 # アプリケーションディレクトリを作成
 RUN mkdir /app
