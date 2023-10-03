@@ -16,6 +16,13 @@ describe User do
       expect(subject.nickname).to eq('テスト太郎')
       expect(subject.email).to eq('test@example.com')
     end
+
+    it '紐づくPostの情報を取得できる' do
+      expect(subject.posts.size).to eq(1)
+      expect(subject.posts.first.title).to eq('タイトル')
+      expect(subject.posts.first.content).to eq('本文')
+      expect(subject.posts.first.user_id).to eq(@user.id)
+    end
   end
 
   describe 'validation' do
