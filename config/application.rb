@@ -17,5 +17,6 @@ module App
         helper_specs: false, # ヘルパーファイル用のスペックを作成しない
         routing_specs: false # routes.rb用のスペックファイル作成しない
     end  # ここまで追記
+    config.i18n.default_locale = :ja
   end
 end

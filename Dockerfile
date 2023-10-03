@@ -10,8 +10,8 @@ RUN apt-get update && apt-get install -y nodejs npm
 RUN npm install -g yarn
 
 # Google Chromeのインストール
-RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-RUN apt install -y ./google-chrome-stable_current_amd64.deb
+# RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+# RUN apt install -y ./google-chrome-stable_current_amd64.deb
 
 # アプリケーションディレクトリを作成
 RUN mkdir /app
