@@ -40,7 +40,7 @@ describe 'Post', type: :system do
       context 'パラメータが正常な場合' do
         it 'Postを作成できる' do
           expect { subject }.to change(Post, :count).by(1)
-          expect(current_path).to eq('/posts')
+          expect(current_path).to eq('/')
           expect(page).to have_content('投稿しました')
         end
       end
@@ -87,6 +87,75 @@ describe 'Post', type: :system do
     it '投稿タイトルをクリックすると詳細ページへ遷移する' do
       click_link 'RSpec学習完了'
       expect(current_path).to eq("/posts/#{@post.id}")
+    end
+  end
+
+  describe 'ログ削除機能の検証' do
+    context '投稿したユーザーでログインしている場合' do
+      before do
+        sign_in @user
+        visit "/posts/#{@post.id}"
+      end
+
+      it '削除ボタンを表示する' do
+        expect(page).to have_button('削除')
+      end
+
+      it '削除ボタンをクリックすると削除できる' do
+        expect do
+          click_button '削除'
+        end.to change(Post, :count).by(-1) # 削除ボタンをクリックするとPostが1つ減る
+
+        # リダイレクト後の画面確認
+        expect(current_path).to eq('/')
+        expect(page).to have_content('投稿が削除されました') # フラッシュメッセージを表示
+        expect(page).not_to have_link("/posts/#{@post.id}") # 削除した投稿(の詳細ページへのリンク)が存在しない
+      end
+    end
+
+    context '投稿したユーザーでログインしていない場合' do
+      it '削除ボタンを表示しない' do
+        visit "/posts/#{@post.id}"
+        expect(page).not_to have_button('削除')
+      end
+
+      it '直接リクエストを投げても削除されない' do
+        visit "/posts/#{@post.id}"
+
+        expect do
+          delete post_path(@post) # 投稿データを削除するリクエストを送る
+        end.not_to change(Post, :count)
+      end
+    end
+  end
+
+  describe 'ナビゲーションバーの検証' do
+    context 'ログインしていない場合' do
+      before { visit '/' }
+
+      it 'ログ一覧リンクを表示する' do
+        expect(page).to have_link('ログ一覧', href: '/')
+      end
+
+      it 'ログ投稿リンクを表示しない' do
+        expect(page).not_to have_link('ログ投稿', href: '/posts/new')
+      end
+    end
+
+    context 'ログインしている場合' do
+      before do
+        user = create(:user) # ログイン用のユーザーを作成
+        sign_in user # 作成したユーザーでログイン
+        visit '/'
+      end
+
+      it 'ログ一覧リンクを表示する' do
+        expect(page).to have_link('ログ一覧', href: '/')
+      end
+
+      it 'ログ投稿リンクを表示する' do
+        expect(page).to have_link('ログ投稿', href: '/posts/new')
+      end
     end
   end
 end
